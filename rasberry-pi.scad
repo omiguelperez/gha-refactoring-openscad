@@ -1,5 +1,3 @@
-//everything in mm
-
 use <pin_headers.scad>;
 use <TextGenerator.scad>;
 
@@ -7,27 +5,35 @@ WIDTH = 56;
 LENGTH = 85;
 HEIGHT = 1.6;
 
-width = 56;	// PCB Width
-length = 85;	// PCB Lenth
-height = 1.6;	// thickness of PCB
+METALLIC = "silver";
 
-Version = "A";
- 
-module ethernet ()
-	{
-	color("silver")
-	translate([length-20,1.5,height]) cube([21.2,16,13.3]); 
+ETHERNET_LENGTH = 21.2;
+ETHERNET_WIDTH = 16;
+ETHERNET_HEIGHT = 13.3;
+ETHERNET_DIMENSIONS = [ETHERNET_LENGTH, ETHERNET_WIDTH, ETHERNET_HEIGHT];
+
+function offset_x (ledge) = LENGTH - ETHERNET_LENGTH + ledge;
+
+module ethernet_port ()
+	{ 
+    ledge = 1.2;
+    pcb_margin = 1.5;
+    offset = [offset_x(ledge), pcb_margin, HEIGHT];
+
+	color(METALLIC)
+        translate(offset) 
+            cube(ETHERNET_DIMENSIONS); 
 	}
 
 module usb ()
 	{
 	color("silver")
-	translate([length-9.5,25,height]) cube([17.3,13.3,16]);
+	translate([LENGTH-9.5,25,HEIGHT]) cube([17.3,13.3,16]);
 	}
 
 module composite ()
 	{
-	translate([length-43.6,width-12,height])
+	translate([LENGTH-43.6,WIDTH-12,HEIGHT])
 		{
 		color("yellow")
 		cube([10,10,13]);
@@ -41,7 +47,7 @@ module composite ()
 module audio ()
 	{
 	//audio jack
-	translate([length-26,width-11.5,height])
+	translate([LENGTH-26,WIDTH-11.5,HEIGHT])
 		{
 		color ([.2,.2,.7])
 		cube([12,11.5,13]);
@@ -56,28 +62,28 @@ module gpio ()
 	{
 	//headers (uses pin_headers.scad to make the pins).
 	rotate([0,0,180])
-	translate([-1,-width+6,height])
+	translate([-1,-WIDTH+6,HEIGHT])
 	off_pin_header(rows = 13, cols = 2);
 	}
 
 module hdmi ()
 	{
 	color ("yellow")
-	translate ([37.1,-1,height])
-	cube([15.1,11.7,8-height]);
+	translate ([37.1,-1,HEIGHT])
+	cube([15.1,11.7,8-HEIGHT]);
 	}
 
 module power ()
 	{
-	translate ([-0.8,3.8,height])
-	cube ([5.6, 8,4.4-height]);
+	translate ([-0.8,3.8,HEIGHT])
+	cube ([5.6, 8,4.4-HEIGHT]);
 	}
 
 module sd ()
 	{
   	color ([0,0,0])
-	translate ([0.9, 15.2,-5.2+height])
-	cube ([16.8, 28.5, 5.2-height]);
+	translate ([0.9, 15.2,-5.2+HEIGHT])
+	cube ([16.8, 28.5, 5.2-HEIGHT]);
 	color ([.2,.2,.7])
 	translate ([-17.3,17.7,-2.9])
 	cube ([32, 24, 2] );
@@ -86,33 +92,33 @@ module sd ()
 module csicamera ()
 	{
 	color([0,0,0])
-	translate ([55,5,height])
-	cube ([5, 25,10-height]);
+	translate ([55,5,HEIGHT])
+	cube ([5, 25,10-HEIGHT]);
 
 	color("white")
-	translate ([55,5,11-height])
+	translate ([55,5,11-HEIGHT])
 	cube ([5, 25,1]);
 	}
 
 module dsidisplay ()
 	{
 	color([0,0,0])
-	translate ([10,15,height])
-	cube ([5, 10,10-height]);
+	translate ([10,15,HEIGHT])
+	cube ([5, 10,10-HEIGHT]);
 	color("white")
-	translate ([10,15,11-height])
+	translate ([10,15,11-HEIGHT])
 	cube ([5, 10,1]);
 	}
 
 module text ()
 	{
-	translate ([25,25,2.6-height])
+	translate ([25,25,2.6-HEIGHT])
 	drawtext("R-Pi");
 	}
 
 module mounthole ()
 	{
-	cylinder (r=3/2, h=height+.2, $fs=0.1);
+	cylinder (r=3/2, h=HEIGHT+.2, $fs=0.1);
 	}
 
 
@@ -123,15 +129,15 @@ module pi()
 	difference ()
 		{
 		color([0.2,0.5,0])
-		linear_extrude(height = height)
-		square([length,width]); //pcb
+		linear_extrude(height = HEIGHT)
+		square([LENGTH,WIDTH]); //pcb
 		translate ([25.5, 18,-0.1])
 		mounthole (); 
-		translate ([length-5, width-12.5, -0.1])
+		translate ([LENGTH-5, WIDTH-12.5, -0.1])
 		mounthole (); 
 		}
 
-	ethernet ();
+	ethernet_port ();
 	usb ();
 	composite ();
 	audio ();
@@ -144,4 +150,4 @@ module pi()
 	text();
 	}
 
-pi(Version);
+pi();
