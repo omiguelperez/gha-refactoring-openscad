@@ -12,24 +12,31 @@ ETHERNET_WIDTH = 16;
 ETHERNET_HEIGHT = 13.3;
 ETHERNET_DIMENSIONS = [ETHERNET_LENGTH, ETHERNET_WIDTH, ETHERNET_HEIGHT];
 
-function offset_x (ledge) = LENGTH - ETHERNET_LENGTH + ledge;
+USB_LENGTH = 17.3;
+USB_WIDTH = 13.3;
+USB_HEIGHT = 16;
+USB_DIMENSIONS = [USB_LENGTH, USB_WIDTH, USB_HEIGHT];
 
-module ethernet_port ()
-	{ 
-    ledge = 1.2;
-    pcb_margin = 1.5;
-    offset = [offset_x(ledge), pcb_margin, HEIGHT];
+function offset_x (ledge, port_length) = LENGTH - port_length + ledge;
+
+module ethernet_port () { 
+  ledge = 1.2;
+  pcb_margin = 1.5;
+  offset = [offset_x(ledge, ETHERNET_LENGTH), pcb_margin, HEIGHT];
 
 	color(METALLIC)
-        translate(offset) 
-            cube(ETHERNET_DIMENSIONS); 
-	}
+    translate(offset) 
+      cube(ETHERNET_DIMENSIONS); 
+}
 
-module usb ()
-	{
-	color("silver")
-	translate([LENGTH-9.5,25,HEIGHT]) cube([17.3,13.3,16]);
-	}
+module usb_port () {
+  ledge = 8.5;
+  offset_y = 25;
+ 
+	color(METALLIC)
+    translate([offset_x(ledge, USB_LENGTH), offset_y, HEIGHT]) 
+      cube(USB_DIMENSIONS);
+}
 
 module composite ()
 	{
@@ -138,7 +145,7 @@ module pi()
 		}
 
 	ethernet_port ();
-	usb ();
+	usb_port ();
 	composite ();
 	audio ();
 	gpio ();
