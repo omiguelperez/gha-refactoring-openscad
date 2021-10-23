@@ -4,8 +4,10 @@ use <TextGenerator.scad>;
 WIDTH = 56;
 LENGTH = 85;
 HEIGHT = 1.6;
+RIGHT = [90, 0, 0];
 
 METALLIC = "silver";
+CHROME = [.9, .9, .9];
 
 ETHERNET_LENGTH = 21.2;
 ETHERNET_WIDTH = 16;
@@ -38,18 +40,30 @@ module usb_port () {
       cube(USB_DIMENSIONS);
 }
 
-module composite ()
-	{
-	translate([LENGTH-43.6,WIDTH-12,HEIGHT])
-		{
-		color("yellow")
-		cube([10,10,13]);
-		translate([5,19,8])
-		rotate([90,0,0])
-		color("silver")
-		cylinder(h = 9, r = 4.15);
-		}
+module composite_block () {
+  color("yellow")
+    cube([10, 10, 13]);
+}
+
+module composite_jack () {
+  fine = .5;
+  
+  translate([5, 19, 8])
+    rotate(RIGHT)
+      color(CHROME)
+        cylinder(h = 9, r = 4.15, $fs = fine);
+}
+
+module composite_port () {
+  offset_x = 41.4;
+  pcb_margin = 12;
+  offset_y = WIDTH - pcb_margin;
+
+	translate([offset_x, offset_y, HEIGHT]) {
+		composite_block();
+    composite_jack();
 	}
+}
 
 module audio ()
 	{
@@ -146,7 +160,7 @@ module pi()
 
 	ethernet_port ();
 	usb_port ();
-	composite ();
+	composite_port ();
 	audio ();
 	gpio ();
 	hdmi ();
