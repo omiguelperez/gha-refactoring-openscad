@@ -1,7 +1,5 @@
 # gha-refactoring
 
-...
-
 This is a sample project to refactor some modules wrote in openscad
 
 ## Credits
